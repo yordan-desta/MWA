@@ -1,0 +1,20 @@
+{
+    "name": "day-2",
+    "version": "1.0.0",
+    "description": "Day 2 Assignment question 4",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "Node",
+        "Express"
+    ],
+    "author": "Yordanos Desta",
+    "license": "ISC",
+    "dependencies": {
+        "dotenv": "^10.0.0",
+        "express": "^4.17.1"
+    }
+}
