@@ -3,9 +3,9 @@ const path = require('path');
 require('dotenv').config();
 const router = require('./api/router');
 
-require('./api/data/dbconnection').open();
+const connection = require('./api/data/dbconnection');
 
-//connection.open();
+connection.open();
 
 const app = express();
 
