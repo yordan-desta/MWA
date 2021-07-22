@@ -4,7 +4,7 @@ require('dotenv').config();
 
 const _dbUrl = process.env.CONNECTION + process.env.DB_NAME;
 
-let _connection = null;
+let _meanGameDatabse = null;
 
 function open() {
     MongoClient.connect(_dbUrl, function(err, client) {
@@ -12,14 +12,14 @@ function open() {
             console.log("unable to connect to " + _dbUrl);
             return;
         }
-        _connection = client.db(process.env.DB_NAME);
+        _meanGameDatabse = client.db(process.env.DB_NAME);
 
         console.log(`connection successful to ${_dbUrl}`);
     });
 }
 
 const get = function() {
-    return _connection;
+    return _meanGameDatabse;
 }
 
 module.exports = {
