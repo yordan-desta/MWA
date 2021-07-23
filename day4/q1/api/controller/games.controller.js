@@ -6,7 +6,7 @@ const Game = mongoose.model('Game');
 module.exports.getAllGames = function(req, res) {
 
     const dCount = 10;
-    const dOffset = 10;
+    const dOffset = 0;
 
     let count = dCount;
     let offset = dOffset;
