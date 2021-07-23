@@ -29,14 +29,7 @@ module.exports.getById = function(req, res) {
     Student.findById(req.params.studentId)
         .select('courses')
         .exec(function(err, doc) {
-
-            //in-memory work :(, untill I find the better way
-
-            for (const c of doc.courses) {
-                if (c.id == req.params.courseId) {
-                    res.status(200).json(c);
-                }
-            }
-            res.status(404).send();
+            console.log(req.params.courseId);
+            res.status(200).json(doc.courses.id(req.params.courseId));
         });
 }
