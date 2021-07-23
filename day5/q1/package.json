@@ -1,0 +1,23 @@
+{
+    "name": "q1",
+    "version": "1.0.0",
+    "description": "Assignment 5 question 1 - headless MEAN games application",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "MeanGames",
+        "express",
+        "node",
+        "headless"
+    ],
+    "author": "Yordanos Desta",
+    "license": "ISC",
+    "dependencies": {
+        "dotenv": "^10.0.0",
+        "express": "^4.17.1",
+        "mongoose": "^5.13.3"
+    }
+}
