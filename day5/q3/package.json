@@ -1,7 +1,7 @@
 {
-    "name": "q2",
+    "name": "q3",
     "version": "1.0.0",
-    "description": "Assignment 5 question 2 - headless MEAN games application Add publisher",
+    "description": "Assignment 5 question 3 - headless MEAN games application Add review",
     "main": "index.js",
     "scripts": {
         "start": "node index.js",
