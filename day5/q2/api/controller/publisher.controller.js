@@ -60,7 +60,7 @@ function addPublisherToGame(game, req, res) {
     game.publisher.name = req.body.name;
     game.publisher.country = req.body.country;
     if (req.body.location) {
-        game.publisher.location.coordinate = [parseFloat(req.body.location.lng), parseFloat(req.body.location.lat)];
+        game.publisher.location.coordinates = [parseFloat(req.body.location.lng), parseFloat(req.body.location.lat)];
         game.publisher.location.type = req.body.location.type;
     }
 
@@ -114,9 +114,9 @@ function fullUpdateGamePublisher(game, req, res) {
 
     if (req.body.location) {
         if (parseFloat(req.body.location.lng) && parseFloat(req.body.location.lat)) {
-            game.publisher.location.coordinate = [parseFloat(req.body.location.lng), parseFloat(req.body.location.lat)];
+            game.publisher.location.coordinates = [parseFloat(req.body.location.lng), parseFloat(req.body.location.lat)];
         } else {
-            game.publisher.location.coordinate = [];
+            game.publisher.location.coordinates = [];
         }
         game.publisher.location.type = req.body.location.type;
     }
@@ -130,7 +130,7 @@ function fullUpdateGamePublisher(game, req, res) {
         }
         if (updt) {
             response.status = 204;
-            response.message = updt.publisher;
+            response.message = updt;
         }
         res.status(response.status).json(response.message);
     });
@@ -140,7 +140,6 @@ module.exports.performPatchUpdate = function(req, res) {
     console.log(`performing patch update for game ${req.params.gameId} publisher`);
 
     Game.findById(req.params.gameId).select("publisher").exec(function(err, doc) {
-        console.log(doc);
         const response = {
             status: 204
         };
@@ -157,6 +156,7 @@ module.exports.performPatchUpdate = function(req, res) {
             res.status(response.status).json(response.message);
             return;
         }
+
         patchUpdateGamePublisher(doc, req, res);
     });
 };
@@ -167,12 +167,8 @@ function patchUpdateGamePublisher(game, req, res) {
 
     if (req.body.country) { game.publisher.country = req.body.country; }
 
-    if (req.body.location) {
-        if (req.body.location.lng) { game.publisher.location.coordinate[0] = parseFloat(req.body.location.lng) }
-
-        if (req.body.location.lat) { game.publisher.location.coordinate[1] = parseFloat(req.body.location.lat) }
-
-        if (req.body.location.type) { game.publisher.location.type = req.body.location.type; }
+    if (req.body.location.lat && req.body.location.lng) {
+        game.publisher.location.coordinates = [parseFloat(req.body.location.lng), parseFloat(req.body.location.lat)]
     }
 
     game.save(function(err, updatedGame) {

@@ -99,7 +99,7 @@ module.exports.createOne = function(req, res) {
 module.exports.performFullUpdate = function(req, res) {
     console.log(`Performing full update with properties ${req.body}`);
 
-    Game.findById(req.params.gameId).select("-reviews -publisher").exec(function(err, doc) {
+    Game.findById(req.params.gameId).select("-publisher").exec(function(err, doc) {
         const response = {
             status: 204
         };
@@ -150,7 +150,7 @@ function fullUpdateGame(doc, req, res) {
 module.exports.performPatchUpdate = function(req, res) {
     console.log(`performing patch update for ${req.params.gameId}`);
 
-    Game.findById(req.params.gameId).select("-reviews -publisher").exec(function(err, doc) {
+    Game.findById(req.params.gameId).select("-publisher").exec(function(err, doc) {
         console.log(doc);
         const response = {
             status: 204

@@ -1,22 +1,5 @@
 const mongoose = require('mongoose');
 
-const reviewSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true
-    },
-    rating: {
-        type: Number,
-        min: 0,
-        max: 5,
-        required: true
-    },
-    review: {
-        type: String,
-        required: true
-    }
-});
-
 const publisherSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -30,7 +13,7 @@ const publisherSchema = new mongoose.Schema({
         type: {
             type: String
         },
-        coordinate: {
+        coordinates: {
             type: [Number],
             index: "2dsphere"
         }
@@ -59,8 +42,10 @@ const gamesSchema = new mongoose.Schema({
     },
     minAge: Number,
     designers: String,
-    publisher: publisherSchema,
-    reviews: [reviewSchema]
+    publisher: {
+        type: publisherSchema,
+        default: {}
+    }
 });
 
 mongoose.model('Game', gamesSchema, 'games');
