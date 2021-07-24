@@ -12,7 +12,22 @@ mongoose.connection.on('error', function() { console.log("error occured with the
 
 process.on("SIGINT", function() {
     mongoose.connection.close(function() {
-        console.log("closed connection");
+        console.log('db conn closed');
         process.exit(0);
     });
+});
+
+process.on('SIGTERM', function() {
+    mongoose.connection.close(function() {
+        console.log('db connection closed');
+        process.exit(0);
+    });
+});
+
+process.once('SIGUSR2', function() {
+    mongoose.connection.close(function() {
+        console.log('db conn closed');
+        process.kill(process.pid, 'SIGUSR2');
+    });
+
 });
