@@ -197,3 +197,22 @@ function patchUpdateGame(doc, req, res) {
         res.status(response.status).json(response.message)
     });
 };
+
+module.exports.deleteGame = function(req, res) {
+    console.log("deleting game");
+    Game.findByIdAndRemove(req.params.gameId, function(err, doc) {
+        const response = {
+            status: 204
+        }
+
+        if (err) {
+            response.status = 500;
+            response.message = err;
+        } else if (!doc) {
+            response.status = 404;
+            response.message = { "messageg": "game not found" };
+        }
+        res.status(response.status).json(response.message);
+    });
+
+}

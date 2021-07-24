@@ -10,6 +10,7 @@ router.route('/games')
 router.route('/games/:gameId')
     .get(gamesController.getGameById)
     .put(gamesController.performFullUpdate)
-    .patch(gamesController.performPatchUpdate);
+    .patch(gamesController.performPatchUpdate)
+    .delete(gamesController.deleteGame);
 
 module.exports = router;
