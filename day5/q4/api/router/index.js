@@ -14,9 +14,14 @@ router.route('/students/:studentId')
     .patch(studentController.performPatch)
     .delete(studentController.delete);
 
-router.route('/students/:studentId/courses').get(courseController.getAll);
+router.route('/students/:studentId/courses')
+    .get(courseController.getAll)
+    .post(courseController.createCource);
 
 router.route('/students/:studentId/courses/:courseId')
-    .get(courseController.getOne);
+    .get(courseController.getOne)
+    .put(courseController.performFullUpdate)
+    .patch(courseController.performPatchUpdate)
+    .delete(courseController.deleteCourse);
 
 module.exports = router;
