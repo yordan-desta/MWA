@@ -34,7 +34,7 @@ const publisherSchema = new mongoose.Schema({
         type: {
             type: String
         },
-        coordinate: {
+        coordinates: {
             type: [Number],
             index: "2dsphere"
         }
@@ -63,7 +63,10 @@ const gamesSchema = new mongoose.Schema({
     },
     minAge: Number,
     designers: String,
-    publisher: publisherSchema,
+    publisher: {
+        type: publisherSchema,
+        defauld: {}
+    },
     reviews: [reviewSchema]
 });
 
