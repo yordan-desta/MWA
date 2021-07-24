@@ -79,8 +79,6 @@ module.exports.createOne = function(req, res) {
         designers: req.body.designers
     };
 
-    console.log(newGame);
-
     Game.create(newGame, function(err, doc) {
         const response = {
             status: 201,

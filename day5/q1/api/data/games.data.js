@@ -1,46 +1,5 @@
 const mongoose = require('mongoose');
 
-const reviewSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true
-    },
-    rating: {
-        type: Number,
-        min: 0,
-        max: 5,
-        required: true
-    },
-    review: {
-        type: String,
-        required: true
-    }
-});
-
-const publishedSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        require: true
-    },
-    country: {
-        type: Number,
-        require: true
-    },
-    established: {
-        type: Date,
-        required: false
-    },
-    location: {
-        type: {
-            type: String
-        },
-        coordinate: {
-            type: [Number],
-            index: "2dsphere"
-        }
-    }
-});
-
 const gamesSchema = new mongoose.Schema({
     title: { type: String, required: true },
     year: Number,
@@ -62,9 +21,7 @@ const gamesSchema = new mongoose.Schema({
         max: 10
     },
     minAge: Number,
-    designers: String,
-    publisher: publishedSchema,
-    reviews: [reviewSchema]
+    designers: String
 });
 
 mongoose.model('Game', gamesSchema, 'games');
