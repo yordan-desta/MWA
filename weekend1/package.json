@@ -1,22 +1,23 @@
 {
-  "name": "weekend1",
-  "version": "1.0.0",
-  "description": "Nobel price winners headless api",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "Nobel",
-    "Prize",
-    "express",
-    "node"
-  ],
-  "author": "Yordanos Desta Tegegn",
-  "license": "ISC",
-  "dependencies": {
-    "dotenv": "^10.0.0",
-    "express": "^4.17.1",
-    "mongoose": "^5.13.3"
-  }
+    "name": "weekend1",
+    "version": "1.0.0",
+    "description": "Nobel price winners headless api",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "Nobel",
+        "Prize",
+        "express",
+        "node"
+    ],
+    "author": "Yordanos Desta Tegegn",
+    "license": "ISC",
+    "dependencies": {
+        "dotenv": "^10.0.0",
+        "express": "^4.17.1",
+        "mongoose": "^5.13.3"
+    }
 }
