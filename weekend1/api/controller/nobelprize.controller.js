@@ -1,6 +1,7 @@
 const { response } = require('express');
 const mongoose = require('mongoose');
 const constants = require('../api.constants');
+const utilModule = require('../api.response.util');
 
 const NobelPrize = mongoose.model('NobelPrize');
 
@@ -26,15 +27,7 @@ module.exports.getAll = function(req, res) {
     }
 
     NobelPrize.find().skip(offset).limit(count).exec(function(err, doc) {
-        const response = {
-            status: 200,
-            message: doc
-        };
-
-        if (err) {
-            response.message = err;
-            response.status = 500;
-        }
+        const response = utilModule.findDocumentResponse(err, doc);
 
         res.status(response.status).json(response.message);
     });
@@ -42,20 +35,7 @@ module.exports.getAll = function(req, res) {
 
 module.exports.getOne = function(req, res) {
     NobelPrize.findById(req.params.nobelId).exec(function(err, doc) {
-        const response = {
-            status: 200,
-            message: doc
-        };
-
-        if (err) {
-            response.status = 500;
-            response.message = err;
-        };
-
-        if (!doc) {
-            response.status = 404;
-            response.message = { 'message': constants.STATUS_MESSAGES.MSG_404 }
-        }
+        const response = utilModule.findDocumentResponse(err, doc);
 
         res.status(response.status).json(response.message);
     });
@@ -69,14 +49,7 @@ module.exports.create = function(req, res) {
     nobelPrize.year = parseInt(req.body.year);
 
     NobelPrize.create(nobelPrize, function(err, doc) {
-        const response = {
-            status: 201,
-            message: doc
-        };
-        if (err) {
-            response.status = 500;
-            response.message = err;
-        }
+        const response = utilModule.buildCreateResponse(err, doc);
 
         res.status(response.status).json(response.message);
     });
@@ -84,19 +57,10 @@ module.exports.create = function(req, res) {
 
 module.exports.fullUpdate = function(req, res) {
     NobelPrize.findById(req.params.nobelId).select('-winner').exec(function(err, doc) {
-        const response = {
-            status: 200
-        };
 
-        if (err) {
-            response.status = 500;
-            response.message = err;
-        } else if (!doc) {
-            response.status = 404;
-            response.message = { "message": "resource not found" };
-        }
+        const response = utilModule.findDocumentResponse(err, doc);
 
-        if (200 !== response.status) {
+        if (!response.ok) {
             res.status(response.status).json(response.message);
             return;
         }
@@ -110,15 +74,7 @@ function makeFullUpdate(nobelPrize, req, res) {
     nobelPrize.year = parseInt(req.body.year);
 
     nobelPrize.save(function(err, doc) {
-        const response = {
-            status: 204,
-            message: doc
-        };
-
-        if (err) {
-            response.status = 500;
-            response.message = err;
-        };
+        const response = utilModule.buildUpdateResponse(err, doc);
 
         res.status(response.status).json(response.message);
     });
@@ -126,17 +82,9 @@ function makeFullUpdate(nobelPrize, req, res) {
 
 module.exports.patchUpdate = function(req, res) {
     NobelPrize.findById(req.params.nobelId).select('-winner').exec(function(err, doc) {
-        const response = {
-            status: 200
-        };
-        if (err) {
-            response.status = 500;
-            response.message = err;
-        } else if (!doc) {
-            response.status = 404;
-            response.message = { "message": constants.STATUS_MESSAGES.MSG_404 };
-        }
-        if (response.status !== 200) {
+        const response = utilModule.findDocumentResponse(err, doc);
+
+        if (!response.ok) {
             res.status(response.status).json(response.message);
             return;
         };
@@ -150,35 +98,14 @@ function makePatch(nobelPrize, req, res) {
     if (req.body.year) { nobelPrize.year = parseInt(req.body.year); }
 
     nobelPrize.save(function(err, doc) {
-        const response = {
-            status: 204,
-            message: doc
-        };
-
-        if (err) {
-            response.status = 500;
-            response.message = err;
-        };
-
+        const response = utilModule.buildUpdateResponse(err, doc);
         res.status(response.status).json(response.message);
     });
 }
 
 module.exports.delete = function(req, res) {
     NobelPrize.findByIdAndRemove(req.params.nobelId).exec(function(err, doc) {
-        const response = {
-            status: 204,
-            message: doc
-        };
-
-        if (err) {
-            response.status = 500;
-            response.message = err;
-        } else if (!doc) {
-            response.status = 404;
-            response.message = { "message": constants.STATUS_MESSAGES.MSG_404 };
-        }
-
+        const response = utilModule.buildDeleteResponse(err, doc);
         res.status(response.status).json(response.message);
     });
 };
