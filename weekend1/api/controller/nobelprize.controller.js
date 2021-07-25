@@ -1,4 +1,3 @@
-const { response } = require('express');
 const mongoose = require('mongoose');
 const constants = require('../api.constants');
 const utilModule = require('../api.response.util');
@@ -56,7 +55,7 @@ module.exports.create = function(req, res) {
 };
 
 module.exports.fullUpdate = function(req, res) {
-    NobelPrize.findById(req.params.nobelId).select('-winner').exec(function(err, doc) {
+    NobelPrize.findById(req.params.nobelId).select('-winners').exec(function(err, doc) {
 
         const response = utilModule.buildFindDocumentResponse(err, doc);
 
@@ -81,7 +80,7 @@ function makeFullUpdate(nobelPrize, req, res) {
 };
 
 module.exports.patchUpdate = function(req, res) {
-    NobelPrize.findById(req.params.nobelId).select('-winner').exec(function(err, doc) {
+    NobelPrize.findById(req.params.nobelId).select('-winners').exec(function(err, doc) {
         const response = utilModule.buildFindDocumentResponse(err, doc);
 
         if (!response.ok) {

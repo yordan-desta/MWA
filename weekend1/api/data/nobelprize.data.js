@@ -11,8 +11,9 @@ const winnerSchema = new mongoose.Schema({
 });
 
 const nobelPrizeSchema = new mongoose.Schema({
-    winner: {
+    winners: {
         type: [winnerSchema],
+        default: []
     },
     category: {
         type: String,

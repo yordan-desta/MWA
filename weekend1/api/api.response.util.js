@@ -20,7 +20,7 @@ module.exports.buildFindDocumentResponse = function(err, doc) {
     } else if (!doc) {
         response.status = 404;
         response.message = { "message": "Resource not found!" }
-        response.ok = true;
+        response.ok = false;
     }
 
     return response;
@@ -88,6 +88,10 @@ module.exports.buildDeleteResponse = function(err, doc) {
     if (err) {
         response.status = 500;
         response.message = err;
+        response.ok = false;
+    } else if (!doc) {
+        response.status = 404;
+        response.message = { "message": "Resource not found!" }
         response.ok = false;
     }
     return response;

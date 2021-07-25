@@ -4,21 +4,21 @@ const winnerController = require('../controller/winner.controller');
 const router = express.Router();
 
 
-router.route('/nobelprize')
+router.route('/nobelprizes')
     .get(nobelPrizeController.getAll)
     .post(nobelPrizeController.create);
 
-router.route('/nobelprize/:nobelId')
+router.route('/nobelprizes/:nobelId')
     .get(nobelPrizeController.getOne)
     .put(nobelPrizeController.fullUpdate)
     .patch(nobelPrizeController.patchUpdate)
     .delete(nobelPrizeController.delete);
 
-router.route('/nobelprize/:nobelId/winner')
+router.route('/nobelprizes/:nobelId/winners')
     .get(winnerController.getAll)
     .post(winnerController.create);
 
-router.route('/nobelprize/:nobelId/winner/:winnerId')
+router.route('/nobelprizes/:nobelId/winners/:winnerId')
     .get(winnerController.getOne)
     .put(winnerController.fullUpdate)
     .patch(winnerController.patchUpdate)
