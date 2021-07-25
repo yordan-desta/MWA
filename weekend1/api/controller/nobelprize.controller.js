@@ -54,7 +54,7 @@ module.exports.getOne = function(req, res) {
 
         if (!doc) {
             response.status = 404;
-            response.message = { 'message': constants.MSG_404 }
+            response.message = { 'message': constants.STATUS_MESSAGES.MSG_404 }
         }
 
         res.status(response.status).json(response.message);
@@ -134,7 +134,7 @@ module.exports.patchUpdate = function(req, res) {
             response.message = err;
         } else if (!doc) {
             response.status = 404;
-            response.message = { "message": constants.MSG_404 };
+            response.message = { "message": constants.STATUS_MESSAGES.MSG_404 };
         }
         if (response.status !== 200) {
             res.status(response.status).json(response.message);
@@ -176,7 +176,7 @@ module.exports.delete = function(req, res) {
             response.message = err;
         } else if (!doc) {
             response.status = 404;
-            response.message = { "message": constants.MSG_404 };
+            response.message = { "message": constants.STATUS_MESSAGES.MSG_404 };
         }
 
         res.status(response.status).json(response.message);

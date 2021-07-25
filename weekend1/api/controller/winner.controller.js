@@ -4,7 +4,7 @@ const constants = require('../api.constants');
 const NobelPrize = mongoose.model('NobelPrize')
 
 module.exports.getAll = function(req, res) {
-    NobelPrize.find(req.params.nobelId).select('winner').exec(function(err, doc) {
+    NobelPrize.findById(req.params.nobelId).select('winner').exec(function(err, doc) {
         const response = {
             status: 200,
             message: doc
@@ -15,7 +15,7 @@ module.exports.getAll = function(req, res) {
             response.message = err;
         } else if (!doc) {
             response.status = 404;
-            response.message = { "message": constants.MSG_404 }
+            response.message = { "message": constants.STATUS_MESSAGES.MSG_404 };
         } else {
             response.message = doc.winner;
         }
@@ -37,7 +37,7 @@ module.exports.getOne = function(req, res) {
             response.message = err;
         } else if (!doc) {
             response.status = 404;
-            response.message = { "message": constants.MSG_404 }
+            response.message = { "message": constants.STATUS_MESSAGES.MSG_404 }
         } else {
             response.message = doc.winner.id(req.params.winnerId);
         }
@@ -58,14 +58,14 @@ module.exports.create = function(req, res) {
             response.message = err;
         } else if (!doc) {
             response.status = 404;
-            response.message = { "message": constants.MSG_404 };
+            response.message = { "message": constants.STATUS_MESSAGES.MSG_404 };
         }
         if (response.status !== 200) {
             res.status(response.status).json(response.message);
             return;
         }
 
-        createWinner(nobelPrize, req, res);
+        createWinner(doc, req, res);
 
     });
 };
@@ -102,9 +102,9 @@ module.exports.fullUpdate = function(req, res) {
         if (err) {
             response.status = 500;
             response.message = err;
-        } else if (!doc) {
+        } else if (!doc || !doc.winner) {
             response.status = 404;
-            response.message = { "message": constants.MSG_404 }
+            response.message = { "message": constants.STATUS_MESSAGES.MSG_404 }
         }
         if (response.status !== 200) {
             res.status(response.status).json(response.message);
@@ -124,7 +124,7 @@ function runFullUpdate(nobelPrize, req, res) {
     nobelPrize.save(function(err, doc) {
         const response = {
             status: 204,
-            message: doc.winner.id(req.params.winnerId);
+            message: doc.winner.id(req.params.winnerId)
         }
         if (err) {
             response.status = 500;
@@ -136,7 +136,7 @@ function runFullUpdate(nobelPrize, req, res) {
 };
 //patchupdate
 
-module.exports.partchUpdate = function(req, res) {
+module.exports.patchUpdate = function(req, res) {
     NobelPrize.findById(req.params.nobelId).select('winner').exec(function(err, doc) {
         const response = {
             status: 200
@@ -145,9 +145,9 @@ module.exports.partchUpdate = function(req, res) {
         if (err) {
             response.status = 500;
             response.message = err;
-        } else if (!doc) {
+        } else if (!doc || !doc.winner.id(req.params.winnerId)) {
             response.status = 404;
-            response.message = { "message": constants.MSG_404 }
+            response.message = { "message": constants.STATUS_MESSAGES.MSG_404 }
         }
         if (response.status !== 200) {
             res.status(response.status).json(response.message);
@@ -158,10 +158,13 @@ module.exports.partchUpdate = function(req, res) {
 };
 
 function runpatchUpdate(nobelPrize, req, res) {
-    const winner = nobelPrize.winner.id(req.params.winnerid);
+
+    const winner = nobelPrize.winner.id(req.params.winnerId);
 
     if (req.body.name) { winner.name = req.body.name; }
     if (req.body.description) { winner.description = req.body.description; }
+
+    console.log(winner);
 
     nobelPrize.save(function(err, doc) {
         const response = {
@@ -188,7 +191,7 @@ module.exports.delete = function(req, res) {
             response.message = err;
         } else if (!doc || !doc.winner.id(req.params.winnerId)) {
             response.status = 404;
-            response.message = { "message": constants.MSG_404 }
+            response.message = { "message": constants.STATUS_MESSAGES.MSG_404 }
         }
         if (response.status !== 200) {
             res.status(response.status).json(response.message);
@@ -210,7 +213,11 @@ function runDelete(nobelPrize, req, res) {
             response.status = 500;
             response.message = err;
         }
+        if (!doc) {
+            response.status = 404;
+            response.message = { "message": constants.STATUS_MESSAGES.MSG_404 }
+        }
 
         res.status(response.status).json(response.message);
     });
-}
+};

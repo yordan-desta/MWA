@@ -16,7 +16,7 @@ const nobelPrizeSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        enum: ['PYSICS', 'MEDICINE', 'CHEMISTRY', 'ECONOMICS', 'LITERATURE'],
+        enum: ['PHYSICS', 'MEDICINE', 'CHEMISTRY', 'ECONOMICS', 'LITERATURE'],
         required: true
     },
     year: {

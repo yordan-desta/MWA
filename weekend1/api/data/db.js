@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 require('./nobelprize.data');
 
 
-mongoose.connect(process.env.CONN_URL + process.env.DB_NAME);
+mongoose.connect(process.env.CONN_URL + process.env.DB_NAME, { useUnifiedTopology: true, useNewUrlParser: true });
 
 mongoose.connection.on('connected', function() {
     console.log("connection to db successful");
@@ -30,9 +30,9 @@ process.on('SIGTERM', function() {
     });
 });
 
-process.once('SIGUSR2', function() {
+process.once("SIGUSR2", function() {
     mongoose.connection.close(function() {
-        console.log('conn to db closed');
-        process.kig(process.pid, 'SIGUSR2');
-    });
-})
+        console.log("connection closed");
+        process.kill(process.pid, "SINGUSR2");
+    })
+});
