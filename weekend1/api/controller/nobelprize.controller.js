@@ -27,7 +27,7 @@ module.exports.getAll = function(req, res) {
     }
 
     NobelPrize.find().skip(offset).limit(count).exec(function(err, doc) {
-        const response = utilModule.findDocumentResponse(err, doc);
+        const response = utilModule.buildFindDocumentResponse(err, doc);
 
         res.status(response.status).json(response.message);
     });
@@ -35,7 +35,7 @@ module.exports.getAll = function(req, res) {
 
 module.exports.getOne = function(req, res) {
     NobelPrize.findById(req.params.nobelId).exec(function(err, doc) {
-        const response = utilModule.findDocumentResponse(err, doc);
+        const response = utilModule.buildFindDocumentResponse(err, doc);
 
         res.status(response.status).json(response.message);
     });
@@ -58,7 +58,7 @@ module.exports.create = function(req, res) {
 module.exports.fullUpdate = function(req, res) {
     NobelPrize.findById(req.params.nobelId).select('-winner').exec(function(err, doc) {
 
-        const response = utilModule.findDocumentResponse(err, doc);
+        const response = utilModule.buildFindDocumentResponse(err, doc);
 
         if (!response.ok) {
             res.status(response.status).json(response.message);
@@ -82,7 +82,7 @@ function makeFullUpdate(nobelPrize, req, res) {
 
 module.exports.patchUpdate = function(req, res) {
     NobelPrize.findById(req.params.nobelId).select('-winner').exec(function(err, doc) {
-        const response = utilModule.findDocumentResponse(err, doc);
+        const response = utilModule.buildFindDocumentResponse(err, doc);
 
         if (!response.ok) {
             res.status(response.status).json(response.message);

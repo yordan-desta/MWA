@@ -6,7 +6,7 @@
  * @param {mongoose document object} doc 
  * @returns response object
  */
-module.exports.findDocumentResponse = function(err, doc) {
+module.exports.buildFindDocumentResponse = function(err, doc) {
     const response = {
         status: 200,
         message: doc,

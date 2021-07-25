@@ -1,12 +1,11 @@
 const mongoose = require('mongoose');
-const constants = require('../api.constants');
 const utilModule = require('../api.response.util');
 
 const NobelPrize = mongoose.model('NobelPrize')
 
 module.exports.getAll = function(req, res) {
     NobelPrize.findById(req.params.nobelId).select('winner').exec(function(err, doc) {
-        const response = utilModule.findDocumentResponse(err, doc);
+        const response = utilModule.buildFindDocumentResponse(err, doc);
 
         if (response.ok) {
             response.message = doc.winner;
@@ -20,7 +19,7 @@ module.exports.getAll = function(req, res) {
 module.exports.getOne = function(req, res) {
     NobelPrize.findById(req.params.nobelId).select('winner').exec(function(err, doc) {
 
-        const response = utilModule.findDocumentResponse(err, doc);
+        const response = utilModule.buildFindDocumentResponse(err, doc);
 
         if (response.ok) {
             response.message = doc.winner.id(req.params.winnerId);
@@ -33,7 +32,7 @@ module.exports.getOne = function(req, res) {
 //create
 module.exports.create = function(req, res) {
     NobelPrize.findById(req.params.nobelId).select('winner').exec(function(err, doc) {
-        const response = utilModule.findDocumentResponse(err, doc);
+        const response = utilModule.buildFindDocumentResponse(err, doc);
 
         if (!response.ok) {
             res.status(response.status).json(response.message);
@@ -61,7 +60,7 @@ function createWinner(nobelPrize, req, res) {
 //fullupdate
 module.exports.fullUpdate = function(req, res) {
     NobelPrize.findById(req.params.nobelId).select('winner').exec(function(err, doc) {
-        const response = utilModule.findDocumentResponse(err, doc);
+        const response = utilModule.buildFindDocumentResponse(err, doc);
 
         if (!response.ok) {
             res.status(response.status).json(response.message);
@@ -93,7 +92,7 @@ function runFullUpdate(nobelPrize, req, res) {
 
 module.exports.patchUpdate = function(req, res) {
     NobelPrize.findById(req.params.nobelId).select('winner').exec(function(err, doc) {
-        const response = utilModule.findDocumentResponse(err, doc);
+        const response = utilModule.buildFindDocumentResponse(err, doc);
 
         if (!response.ok) {
             res.status(response.status).json(response.message);
@@ -126,7 +125,7 @@ function runpatchUpdate(nobelPrize, req, res) {
 //delete
 module.exports.delete = function(req, res) {
     NobelPrize.findById(req.params.nobelId).select('winner').exec(function(err, doc) {
-        const response = utilModule.findDocumentResponse(err, doc);
+        const response = utilModule.buildFindDocumentResponse(err, doc);
 
         if (!response.status) {
             res.status(response.status).json(response.message);
