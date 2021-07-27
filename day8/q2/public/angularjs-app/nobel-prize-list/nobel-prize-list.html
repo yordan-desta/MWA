@@ -1,0 +1,5 @@
+<h1>{{vm.pageTitle}}</h1>
+<ul>
+    <li ng-repeat="prize in vm.prizes track by $index">
+        <a href="/#!/prize/{{prize._id}}">The {{prize.year}} - {{prize.category}} Award</a></li>
+</ul>

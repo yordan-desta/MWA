@@ -1,0 +1,8 @@
+<h1>{{vm.prize.category}} - {{vm.prize.year}}</h1>
+
+<ul>
+    <li ng-repeat="winner in vm.prize.winners track by $index">
+        <p> Name: {{winner.name}}</p>
+        <p>Description: {{winner.description}}</p>
+    </li>
+</ul>
