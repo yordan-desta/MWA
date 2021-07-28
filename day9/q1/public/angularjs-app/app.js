@@ -2,12 +2,12 @@ angular.module('nobelPrizeApp', ['ngRoute']).config(config);
 
 function config($routeProvider) {
     $routeProvider.when('/', {
-        templateUrl: 'angularjs-app/nobel-prize-list/nobel-prize-list.html',
-        controller: 'NobelPrizeListController',
+        templateUrl: 'angularjs-app/nobel-list/nobel-list.html',
+        controller: 'NobelListController',
         controllerAs: 'vm'
-    }).when('/prize/:id', {
-        templateUrl: 'angularjs-app/winner-list/winner-list.html',
-        controller: 'WinnerController',
+    }).when('/nobels/:id', {
+        templateUrl: 'angularjs-app/nobel/nobel.html',
+        controller: 'NobelController',
         controllerAs: 'vm'
-    })
+    });
 }
