@@ -6,6 +6,7 @@ function nobelListController(NobelDataFactory) {
 
     NobelDataFactory.getAll().then(function(response) {
         console.log(response.data);
+        vm.nobels = response.data;
     });
 
 }

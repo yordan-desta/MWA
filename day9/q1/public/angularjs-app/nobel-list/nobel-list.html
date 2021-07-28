@@ -1,1 +1,5 @@
-{{vm.title}}
+<h1>Nobel Prizes</h1>
+
+<ul>
+    <li ng-repeat="nobel in vm.nobels"><a href="/#!/nobels/{{nobel._id}}">{{nobel.year}} winner in {{nobel.category | lowercase}}</a> </li>
+</ul>

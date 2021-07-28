@@ -2,10 +2,11 @@ angular.module('nobelPrizeApp').controller('NobelController', nobelController);
 
 function nobelController(NobelDataFactory, $routeParams) {
     const vm = this;
-    vm.title = "in nobel controller";
+    vm.title = "Nobel Detail";
 
     NobelDataFactory.getOne($routeParams.id).then(function(response) {
-        console.log(response.data);
+
+        vm.nobel = response.data;
     });
 
 }
