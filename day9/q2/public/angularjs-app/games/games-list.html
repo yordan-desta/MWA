@@ -1,6 +1,9 @@
 <h1>{{vm.pageTitle}}</h1>
 <ul>
-    <li ng-repeat="game in vm.games"><a href="/#!/game/{{game._id}}">{{game.title}}</a></li>
+    <li ng-repeat="game in vm.games"><a href="/#!/game/{{game._id}}">{{game.title}}</a>
+        <button ng-click="vm.delete(game._id)">Delete</button>
+        <button><a href="/#!/game/{{game._id}}/edit">Edit</a></button>
+    </li>
 </ul>
 
 <div>

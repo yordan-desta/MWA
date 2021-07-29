@@ -17,5 +17,11 @@ function gamesListController(GameFactory, $route) {
         GameFactory.createGame(vm.gameData).then(function(response) {
             $route.reload();
         });
+    };
+
+    vm.delete = function(id) {
+        GameFactory.deleteGame(id).then(function(response) {
+            $route.reload();
+        });
     }
 }

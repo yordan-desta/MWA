@@ -9,5 +9,9 @@ function config($routeProvider) {
         templateUrl: 'angularjs-app/game-display/game-display.html',
         controller: 'GamesDisplayController',
         controllerAs: 'vm'
+    }).when('/game/:id/edit', {
+        templateUrl: 'angularjs-app/game-display/game-display-edit.html',
+        controller: 'GamesDisplayEditController',
+        controllerAs: 'vm'
     });
 }
