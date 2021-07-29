@@ -8,5 +8,4 @@ function nobelController(NobelDataFactory, $routeParams) {
 
         vm.nobel = response.data;
     });
-
 }

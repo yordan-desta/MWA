@@ -1,0 +1,11 @@
+<h1> {{vm.title}} </h1>
+<div>
+
+    Year: <input type="text" value="{{vm.nobel.year}}">
+
+    <br/> Category: <select ng-model="vm.nobel.category" ng-options="cat for cat in vm.category"></select>
+
+    <br/>
+
+    <button ng-click="vm.update()">Update</button>
+</div>

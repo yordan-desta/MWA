@@ -9,5 +9,9 @@ function config($routeProvider) {
         templateUrl: 'angularjs-app/nobel/nobel.html',
         controller: 'NobelController',
         controllerAs: 'vm'
+    }).when('/nobels/:id/edit', {
+        templateUrl: 'angularjs-app/nobel/nobel-edit.html',
+        controller: 'NobelEditController',
+        controllerAs: 'vm'
     });
 }
