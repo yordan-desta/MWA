@@ -1,5 +1,4 @@
 {{vm.title}}
-
 <ul>
     <li ng-repeat="job in vm.jobs"> <a href="/#!/jobs/{{job._id}}">{{job | dateFilter}}</a>
         <button ng-click="vm.deleteJob(job._id)">delete</button>
@@ -9,6 +8,7 @@
 <form name="jobform" ng-submit="vm.create()" validate>
     Title: <input type="text" required ng-model="vm.formdata.title" name="title" />
     <br/>Salary: <input type="number" required ng-model="vm.formdata.salary" name="salary" required pattern="^[0-9]{1,}(.[0-9]{1,})?$" />
+    <span ng-if="jobform.salary.$dirty && jobform.salary.$invalid">Invalid Salary</span>
     <br/>description: <input type="text" required ng-model="vm.formdata.description" name="description" />
     <br/>experience: <input type="text" required ng-model="vm.formdata.experience" name="experience" />
     <br/>skills: <input type="text" required ng-model="vm.formdata.skills" required name="skills" />

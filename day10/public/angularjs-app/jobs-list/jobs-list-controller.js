@@ -1,6 +1,6 @@
 angular.module('jobApp').controller('JobsListController', JobsListController)
 
-function JobsListController(JobDataFactory, $location, $location) {
+function JobsListController(JobDataFactory, $route) {
 
     const vm = this;
 
@@ -21,7 +21,7 @@ function JobsListController(JobDataFactory, $location, $location) {
         console.log('creating', vm.formdata);
 
         JobDataFactory.create(vm.formdata).then(function(response) {
-            $location.path('/');
+            $route.reload();
 
         });
     }
@@ -29,7 +29,7 @@ function JobsListController(JobDataFactory, $location, $location) {
     vm.deleteJob = function(id) {
         console.log('deleting', id);
         JobDataFactory.deleteJob(id).then(function(response) {
-            $location.path('/');
+            $route.reload();
         });
     }
 }
