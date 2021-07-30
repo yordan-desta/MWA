@@ -3,18 +3,23 @@ const mongoose = require('mongoose');
 const JobSearchModel = mongoose.model('JobSearch');
 
 function runGeoQuery(req, res) {
+    const lat = parseFloat(req.query.lat);
+    const lng = parseFloat(req.query.lng);
+    const dist = parseFloat(req.query.dist);
+
     const query = {
-        'jobSearch.location': {
+        'jobs.location': {
             $near: {
                 $geometry: {
                     type: "Point",
-                    coordinates: [parseFloat(req.query.lng), parseFloat(req.query.lat)]
+                    coordinates: [lng, lat]
                 },
-                $minDistance: 0,
-                $maxDistance: parseInt(req.query.dist)
+                $maxDistance: dist
             }
         }
     };
+
+    console.log(query);
 
     JobSearchModel.find(query).exec(function(err, doc) {
         const response = {
@@ -22,7 +27,7 @@ function runGeoQuery(req, res) {
             message: doc
         };
 
-        if (error) {
+        if (err) {
             response.status = 500;
             response.message = err;
         }
@@ -33,11 +38,12 @@ function runGeoQuery(req, res) {
 
 //all
 module.exports.getAll = function(req, res) {
-    let count = process.env.DCOUNT;
-    let offset = process.env.DOFFSET;
-    const maxCount = process.env.MAXCOUNT;
+    let count = parseInt(process.env.DCOUNT);
+    let offset = parseInt(process.env.DOFFSET);
+    const maxCount = parseInt(process.env.MAXCOUNT);
 
-    if (req.lat && req.lng && req.dist) {
+    if (req.query.lat && req.query.lng && req.query.dist) {
+        console.log('runnig geo query')
         runGeoQuery(req, res);
         return;
     }
@@ -58,14 +64,17 @@ module.exports.getAll = function(req, res) {
         count = maxCount;
     }
 
+    console.log(offset, count)
+
     JobSearchModel.find().limit(count).skip(offset).exec(function(err, doc) {
         const response = {
             status: 200,
             message: doc
         };
 
-        if (error) {
+        if (err) {
             response.status = 500;
+            console.log(err);
             response.message = err;
         }
 
@@ -81,7 +90,7 @@ module.exports.getOne = function(req, res) {
             message: doc
         };
 
-        if (error) {
+        if (err) {
             response.status = 500;
             response.message = err;
         } else if (!doc) {
@@ -98,7 +107,7 @@ module.exports.getOne = function(req, res) {
 module.exports.create = function(req, res) {
     const job = {};
     job.title = req.body.title;
-    job.salary = req.body.salary;
+    job.salary = parseFloat(req.body.salary);
     job.description = req.body.description;
     job.experience = req.body.experience;
     job.skills = req.body.skills;
@@ -116,7 +125,7 @@ module.exports.create = function(req, res) {
             message: doc
         };
 
-        if (error) {
+        if (err) {
             response.status = 500;
             response.message = err;
         }
@@ -134,7 +143,7 @@ module.exports.fullUpdate = function(req, res) {
             message: doc
         };
 
-        if (error) {
+        if (err) {
             response.status = 500;
             response.message = err;
         } else if (!doc) {
@@ -168,7 +177,7 @@ function runFullUpdate(job, req, res) {
             message: doc
         };
 
-        if (error) {
+        if (err) {
             response.status = 500;
             response.message = err;
         }
@@ -184,7 +193,7 @@ module.exports.patchUpdate = function(req, res) {
             message: doc
         };
 
-        if (error) {
+        if (err) {
             response.status = 500;
             response.message = err;
         } else if (!doc) {
@@ -221,7 +230,7 @@ function runFullUpdate(job, req, res) {
             message: doc
         };
 
-        if (error) {
+        if (err) {
             response.status = 500;
             response.message = err;
         }
@@ -233,13 +242,14 @@ function runFullUpdate(job, req, res) {
 //delete
 
 module.exports.delete = function(req, res) {
+    console.log(req.params.id);
     JobSearchModel.findByIdAndRemove(req.params.id, function(err, doc) {
         const response = {
             status: 204,
             message: doc
         };
 
-        if (error) {
+        if (err) {
             response.status = 500;
             response.message = err;
         } else if (!doc) {

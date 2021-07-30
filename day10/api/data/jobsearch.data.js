@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const locationSchema = new mongoose.Schema({
     type: {
         type: String,
-        enum: ['Point', ]
+        enum: ['Point', ],
+        required: true
     },
     coordinates: {
         type: [Number],
@@ -38,4 +39,4 @@ const jobSearchSchema = new mongoose.Schema({
     }
 });
 
-mongoose.model('JobSearch', jobSearchSchema, 'jobSearch');
+mongoose.model('JobSearch', jobSearchSchema, 'jobs');

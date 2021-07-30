@@ -9,6 +9,7 @@ router.route('/jobs')
 
 router.route('/jobs/:id').get(jobController.getOne)
     .put(jobController.fullUpdate)
-    .patch(jobController.patchUpdate);
+    .patch(jobController.patchUpdate)
+    .delete(jobController.delete);
 
 module.exports = router;

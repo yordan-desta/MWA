@@ -1,0 +1,14 @@
+{{vm.title}}
+<form name="jobform" ng-submit="vm.update(vm.formdata._id)" validate>
+    Title: <input type="text" required ng-model="vm.formdata.title" name="title" value="vm.formdata.title" />
+    <br/>Salary: <input type="number" step="any" required ng-model="vm.formdata.salary" value="vm.formdata.salary" name="salary" required pattern="^[0-9]{1,}(.[0-9]{1,})?$" />
+    <br/>description: <input type="text" required ng-model="vm.formdata.description" value="vm.formdata.description" name="description" />
+    <br/>experience: <input type="text" required ng-model="vm.formdata.experience" value="vm.formdata.experience" name="experience" />
+    <br/>skills: <input type="text" required ng-model="vm.formdata.skills" value="vm.formdata.skills" required name="skills" />
+    <br/>postDate: <input type="date" required value="vm.formdata.postDate" data-date-format="DD MMMM YYYY" ng-model="vm.formdata.postDate" name="postDate" />
+    <br/>Location Lat: <input type="number" step="any" required ng-model="vm.formdata.lat" value="vm.formdata.lat" name="latitude" />
+    <br/>Location Lng: <input type="number" step="any" required ng-model="vm.formdata.lng" value="vm.formdata.lng" name="longtude" />
+
+    <br/><button type="submit">Update</button>
+
+</form>

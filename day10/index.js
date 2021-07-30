@@ -8,6 +8,9 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+app.use(express.static(process.env.PUBLIC_FOLDER));
+app.use('/node_modules', express.static(process.env.MODULES_FOLDER))
+
 app.use(function(req, res, next) {
     console.log(req.method, req.url);
     next();
