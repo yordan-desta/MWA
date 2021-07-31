@@ -8,7 +8,7 @@ function runGeoQuery(req, res) {
     const dist = parseFloat(req.query.dist);
 
     const query = {
-        'jobs.location': {
+        'location.coordinates': {
             $near: {
                 $geometry: {
                     type: "Point",
