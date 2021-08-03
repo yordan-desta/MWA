@@ -11,6 +11,7 @@
     "license": "ISC",
     "dependencies": {
         "angular": "^1.8.2",
+        "angular-jwt": "^0.1.11",
         "angular-route": "^1.8.2",
         "bcrypt": "^5.0.1",
         "dotenv": "^10.0.0",
