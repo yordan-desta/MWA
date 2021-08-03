@@ -1,0 +1,11 @@
+<h1> {{vm.title}} </h1>
+<div>
+    <div>Category: {{vm.nobel.category}}</div>
+    <div>Year: {{vm.nobel.year}}</div>
+    Winners
+    <ul>
+        <li ng-repeat="winner in vm.nobel.winners">
+            {{winner.name}}<br/> <span style="font-style: italic;"> {{winner.description}}</span>
+        </li>
+    </ul>
+</div>

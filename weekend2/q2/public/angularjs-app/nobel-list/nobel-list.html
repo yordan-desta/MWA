@@ -1,0 +1,19 @@
+<h1>Nobel Prizes</h1>
+
+<ul>
+    <li ng-repeat="nobel in vm.nobels">
+        <a href="/#!/nobels/{{nobel._id}}">{{nobel.year}} winner in {{nobel.category | lowercase}}</a>
+        <button type="submit" ng-click="vm.delete(nobel._id)">Delete</button>
+        <button> <a href="/#!/nobels/{{nobel._id}}/edit">Edit</a> </button>
+    </li>
+</ul>
+Add a new prize
+<form name="vm.nobelForm" ng-submit="vm.create()">
+    Year: <input type="text" required ng-model="vm.formdata.year" pattern="^[0-9]{4,}$" name="year" />
+    <span ng-if="vm.nobelForm.year.$dirty && vm.nobelForm.year.$invalid">Invalid Year
+        
+    </span><br/> Category: <select name="category" ng-model="vm.formdata.category">
+        <option ng-repeat="cat in vm.category">{{cat}}</option>
+    </select><br/>
+    <button type="submit">Add</button>
+</form>
