@@ -25,6 +25,7 @@ module.exports.getAll = function(req, res) {
     }
 
     NobelPrize.find().skip(offset).limit(count).exec(function(err, doc) {
+        console.log(doc, count, offset);
         const response = {
             status: 200,
             message: doc

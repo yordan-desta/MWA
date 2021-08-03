@@ -1,6 +1,7 @@
 const express = require('express');
 const nobelPrizeController = require('../controller/nobelprize.controller');
 const winnerController = require('../controller/winner.controller');
+const userController = require('../controller/users.controller');
 const router = express.Router();
 
 
@@ -23,5 +24,9 @@ router.route('/nobelprizes/:nobelId/winners/:winnerId')
     .put(winnerController.fullUpdate)
     .patch(winnerController.patchUpdate)
     .delete(winnerController.delete);
+
+router.route('/users').post(userController.register);
+
+router.route('/login').post(userController.login);
 
 module.exports = router;
