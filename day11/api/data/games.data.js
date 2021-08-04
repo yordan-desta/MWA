@@ -67,7 +67,9 @@ const gamesSchema = new mongoose.Schema({
         type: publisherSchema,
         defauld: {}
     },
-    reviews: [reviewSchema]
+    reviews: {
+        type: [reviewSchema]
+    }
 });
 
 mongoose.model('Game', gamesSchema, 'games');

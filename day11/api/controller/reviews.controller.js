@@ -2,79 +2,60 @@ const mongoose = require('mongoose');
 
 const Game = mongoose.model('Game');
 
+
 module.exports.getGameReviews = function(req, res) {
 
     console.log(`Getting a game reviews`);
 
-    Game.findById(req.params.gameId).select('reviews').exec(function(err, doc) {
-        console.log(doc);
-        const response = {
-            status: 200,
-        }
-        if (err) {
-            response.status = 500;
-            response.message = err;
-        } else if (!doc) {
-            response.status = 404;
-            response.message = { "message": "Your requested unavailable resource" };
-        } else {
-            response.message = doc.reviews;
-        }
-
-        res.status(response.status).json(response.message);
-    });
+    Game.findById(req.params.gameId).select('reviews')
+        .exec()
+        .then((doc) => returnReviews(doc, res))
+        .catch((err) => res.status(500).json(err));;
 };
+
+function returnReviews(game, res) {
+    if (!game) {
+        res.status(404).json({ "message": "Your requested unavailable resource" });
+    } else {
+        res.status(200).json({ "message": game });
+    }
+}
+
 
 module.exports.getOneReview = function(req, res) {
     console.log(`getting game review with id ${req.params.reviewId}`);
 
-    Game.findById(req.params.gameId).select('reviews').exec(function(err, doc) {
-        console.log(doc);
-        const response = {
-            status: 200,
-        }
-        if (err) {
-            response.status = 500;
-            response.message = err;
-        } else if (!doc) {
-            response.status = 404;
-            response.message = { "message": "Your requested unavailable resource" };
-        } else {
-            response.message = doc.reviews.id(req.params.reviewId);
-        }
+    Game.findById(req.params.gameId).select('reviews')
+        .exec()
+        .then((doc) => returnReview(doc, res))
+        .catch((err) => res.status(500).json(err));;
+}
 
-        res.status(response.status).json(response.message);
-    });
+function returnReview(game, res) {
+    if (!game) {
+        res.status(404).json({ "message": "Your requested unavailable resource" });
+    } else {
+        res.status(200).json({ "message": game.reviews.id(req.params.reviewId) });
+    }
 }
 
 module.exports.createReview = function(req, res) {
 
     console.log("creating review");
 
-    Game.findById(req.params.gameId).select('reviews').exec(function(err, doc) {
-        console.log("game for review", doc);
-        const response = {
-            status: 200,
-        }
-        if (err) {
-            response.status = 500;
-            response.message = err;
-        } else if (!doc) {
-            response.status = 404;
-            response.message = { "message": "Your requested unavailable resource" };
-        }
-
-        if (response.status !== 200) {
-            res.status(response.status).json(response.message);
-            return;
-        }
-
-        addReviewToGame(doc, req, res);
-    });
+    Game.findById(req.params.gameId).select('reviews')
+        .exec()
+        .then((doc) => saveReviewToGame(doc, req, res))
+        .then((doc) => res.status(204).json(doc))
+        .catch((err) => res.status(500).json(err));
 };
 
-function addReviewToGame(game, req, res) {
+function saveReviewToGame(game, req, res) {
 
+    if (!game) {
+        res.status(404).json({ "message": "Your requested unavailable resource" });
+        return;
+    }
     console.log("adding review");
 
     const review = {
@@ -82,177 +63,108 @@ function addReviewToGame(game, req, res) {
         review: req.body.review,
         rating: req.body.rating
     }
-    if (!game.reviews) {
-        game.reviews = [];
+
+
+    if (!game.reviews.length) {
+        console.log('no reviews found')
+        game.reviews = [review];
+
+    } else {
+        game.reviews.push(review);
     }
 
-    game.reviews.push(review);
 
     console.log(game.reviews, review);
 
-    game.save(function(err, updt) {
-        const response = {
-            status: 500,
-            message: err
-        }
-        if (updt) {
-            response.status = 201;
-            response.message = updt.reviews;
-        }
-        res.status(response.status).json(response.message);
-    });
+    return game.save();
 }
 
 module.exports.performFullUpdate = function(req, res) {
     console.log(`Performing full update on review`);
 
-    Game.findById(req.params.gameId).select("reviews").exec(function(err, doc) {
-        const response = {
-            status: 200
-        };
-
-        if (err) {
-            response.status = 500;
-            response.message = err;
-
-        } else if (!doc) {
-            response.status = 404;
-            response.message = { statusMessage: "game not found!" };
-        }
-        if (response.status !== 200) {
-            res.status(response.status).json(response.message);
-            return;
-        };
-
-        fullUpdateGameReview(doc, req, res);
-    });
+    Game.findById(req.params.gameId).select("reviews")
+        .exec()
+        .then((game) => updateReview(game, req, res))
+        .then((doc) => res.status(204).json(doc))
+        .catch((err) => res.status(500).json(err));
 };
 
-function fullUpdateGameReview(game, req, res) {
+function updateReview(game, req, res) {
 
-    console.log("full updating review");
+    if (!game) {
+        res.status(404).json({ "message": "review not found" });
+        return;
+    }
 
     const reviewToUpdate = game.reviews.id(req.params.reviewId);
 
     if (!reviewToUpdate) {
         res.status(404).json({ "message": "review not found" });
+        return;
     }
 
     reviewToUpdate.name = req.body.name;
     reviewToUpdate.review = req.body.review;
     reviewToUpdate.rating = req.body.rating;
 
-    game.save(function(err, updt) {
-        const response = {
-            status: 500,
-            message: err
-        }
-        if (updt) {
-            response.status = 204;
-            response.message = updt.reviews.id(req.params.reviewId);
-        }
-        res.status(response.status).json(response.message);
-    });
+    return game.save();
 };
 
 module.exports.performPatchUpdate = function(req, res) {
     console.log(`performing patch update for game ${req.params.gameId} review with id ${req.params.reviewId}`);
 
-    Game.findById(req.params.gameId).select("reviews").exec(function(err, doc) {
-        console.log(doc);
-        const response = {
-            status: 204
-        };
-
-        if (err) {
-            response.status = 500;
-            response.message = err;
-
-        } else if (!doc) {
-            response.status = 404;
-            response.message = { statusMessage: "game not found!" };
-        }
-        if (response.status !== 204) {
-            res.status(response.status).json(response.message);
-            return;
-        }
-        patchUpdateGameReviews(doc, req, res);
-    });
+    Game.findById(req.params.gameId).select("reviews")
+        .exec()
+        .then((game) => patchUpdateGameReviews(game, req, res))
+        .then((doc) => res.status(204).json(doc))
+        .catch((err) => res.status(500).json(err));
 };
 
 function patchUpdateGameReviews(game, req, res) {
+    if (!game) {
+        res.status(404).json({ "message": "review not found" });
+        return;
+    }
 
     const reviewToUpdate = game.reviews.id(req.params.reviewId);
 
     if (!reviewToUpdate) {
         res.status(404).json({ "message": "review not found" });
+        return;
     }
 
     if (req.body.name) { reviewToUpdate.name = req.body.name; }
     if (req.body.review) { reviewToUpdate.review = req.body.review; }
     if (req.body.rating) { reviewToUpdate.rating = req.body.rating; }
 
-    game.save(function(err, updatedGame) {
-        const response = {
-            status: 204,
-            message: updatedGame
-        };
-
-        if (err) {
-            response.status = 500;
-            response.message = err;
-        }
-        res.status(response.status).json(response.message)
-    });
+    return game.save();
 };
 
 module.exports.deleteReview = function(req, res) {
     console.log('deliting review from game');
 
-    Game.findById(req.params.gameId).select("reviews").exec(function(err, doc) {
-
-        const response = {
-            status: 204
-        };
-
-        if (err) {
-            response.status = 500;
-            response.message = err;
-
-        } else if (!doc) {
-            response.status = 404;
-            response.message = { statusMessage: "game not found!" };
-        }
-
-        if (response.status !== 204) {
-            res.status(response.status).json(response.message);
-            return;
-        }
-        deleteReview(doc, req, res);
-    });
+    Game.findById(req.params.gameId).select("reviews")
+        .exec()
+        .then((game) => deleteReview(game, req, res))
+        .then((doc) => res.status(204).json(doc))
+        .catch((err) => res.status(500).json(err));
 }
 
 function deleteReview(game, req, res) {
+
+    if (!game) {
+        res.status(404).json({ "message": "review not found" });
+        return;
+    }
 
     const reviewToUpdate = game.reviews.id(req.params.reviewId);
 
     if (!reviewToUpdate) {
         res.status(404).json({ "message": "review not found" });
+        return;
     }
 
     reviewToUpdate.remove();
 
-    game.save(function(err, updt) {
-        const response = {
-            status: 204,
-            message: updt
-        };
-
-        if (err) {
-            response.message = err;
-            response.status = 500;
-        }
-
-        res.status(response.status).json(response.message);
-    });
+    game.save();
 }

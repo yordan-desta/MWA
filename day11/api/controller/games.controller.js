@@ -27,42 +27,35 @@ module.exports.getAllGames = function(req, res) {
 
     console.log(`checking for games list for count=${count} and offset=${offset}`);
 
-    Game.find().limit(count).skip(offset).exec(function(err, doc) {
-
-        const response = {
-            status: 200,
-            message: doc
-        }
-
-        if (err) {
-            response.status = 500;
-            response.message = err;
-        }
-
-        res.status(response.status).json(response.message);
-    });
+    Game.find().limit(count).skip(offset)
+        .exec()
+        .then((doc) => res.status(200).json(doc))
+        .catch((err) => returnError(err, res));
 };
+
 
 module.exports.getGameById = function(req, res) {
 
     console.log(`Lookign for game with an id ${req.params.gameId}`);
 
-    Game.findById(req.params.gameId).exec(function(err, doc) {
-        const response = {
-            status: 200,
-            message: doc
-        }
-        if (err) {
-            response.status = 500;
-            response.message = err;
-        } else if (!doc) {
-            response.status = 404;
-            response.message = { "message": "Resource not found!" };
-        }
+    Game.findById(req.params.gameId).exec()
+        .then((doc) => retunOne(doc, res))
+        .catch((err) => res.status(500).json(err));
 
-        res.status(response.status).json(response.message);
-    });
 };
+
+function retunOne(doc, res) {
+    const response = {
+        status: 200,
+        message: doc
+    }
+    if (!doc) {
+        response.status = 404;
+        response.message = { "message": "Resource not found!" };
+    }
+
+    res.status(response.status).json(response.message);
+}
 
 module.exports.createOne = function(req, res) {
 
@@ -81,47 +74,27 @@ module.exports.createOne = function(req, res) {
 
     console.log(newGame);
 
-    Game.create(newGame, function(err, doc) {
-        const response = {
-            status: 201,
-            message: doc
-        };
+    Game.create(newGame)
+        .then((doc) => res.status(201).json(doc))
+        .catch((err) => res.status(500).json(err));
 
-        if (err) {
-            response.status = 400;
-            response.message = err;
-        };
-
-        res.status(response.status).json(response.message);
-    });
 };
 
 module.exports.performFullUpdate = function(req, res) {
     console.log(`Performing full update with properties ${req.body}`);
 
-    Game.findById(req.params.gameId).select("-reviews -publisher").exec(function(err, doc) {
-        const response = {
-            status: 204
-        };
-
-        if (err) {
-            response.status = 500;
-            response.message = err;
-
-        } else if (!doc) {
-            response.status = 404;
-            response.message = { statusMessage: "resource not found!" };
-        }
-        if (response.status !== 204) {
-            res.status(response.status).json(response.message);
-            return;
-        };
-
-        fullUpdateGame(doc, req, res);
-    });
+    Game.findById(req.params.gameId).select("-reviews -publisher")
+        .exec()
+        .then((doc) => fullUpdateGame(doc, req, res))
+        .then((doc) => res.status(204).json(doc))
+        .catch((err) => res.status(500).json(err));
 };
 
 function fullUpdateGame(doc, req, res) {
+
+    if (!doc) {
+        res.status(404).json({ "message": "game not found" });
+    }
 
     doc.title = req.body.title;
     doc.year = parseInt(req.body.year);
@@ -132,44 +105,18 @@ function fullUpdateGame(doc, req, res) {
     doc.minAge = parseInt(req.body.minAge);
     doc.designers = req.body.designers;
 
-    doc.save(function(err, updatedGame) {
-        const response = {
-            status: 204,
-            message: updatedGame
-        };
-
-        if (err) {
-            response.status = 500;
-            response.message = err;
-        }
-
-        res.status(response.status).json(response.doc);
-    });
+    return doc.save();
 };
 
 module.exports.performPatchUpdate = function(req, res) {
     console.log(`performing patch update for ${req.params.gameId}`);
 
-    Game.findById(req.params.gameId).select("-reviews -publisher").exec(function(err, doc) {
-        console.log(doc);
-        const response = {
-            status: 204
-        };
+    Game.findById(req.params.gameId).select("-reviews -publisher")
+        .exec()
+        .then((doc) => patchUpdateGame(doc, req, res))
+        .then((doc) => res.status(204).json(doc))
+        .catch((err) => res.status(500).json(err));
 
-        if (err) {
-            response.status = 500;
-            response.message = err;
-
-        } else if (!doc) {
-            response.status = 404;
-            response.message = { statusMessage: "resource not found!" };
-        }
-        if (response.status !== 204) {
-            res.status(response.status).json(response.message);
-            return;
-        }
-        patchUpdateGame(doc, req, res);
-    });
 };
 
 function patchUpdateGame(doc, req, res) {
@@ -183,35 +130,25 @@ function patchUpdateGame(doc, req, res) {
     if (req.body.minAge) { doc.minAge = parseInt(req.body.minAge) };
     if (req.body.designers) { doc.designers = req.body.designers };
 
-    doc.save(function(err, updatedGame) {
-        const response = {
-            status: 204,
-            message: updatedGame
-        };
-
-        if (err) {
-            response.status = 500;
-            response.message = err;
-        }
-        console.log(doc);
-        res.status(response.status).json(response.message)
-    });
+    return doc.save();
 };
 module.exports.deleteGame = function(req, res) {
     console.log("deleting game");
-    Game.findByIdAndRemove(req.params.gameId, function(err, doc) {
-        const response = {
-            status: 204
-        }
+    Game.findByIdAndRemove(req.params.gameId)
+        .then((doc) => returnDeleteResonse(doc, res))
+        .catch((err) => res.status(500).json(err));;
 
-        if (err) {
-            response.status = 500;
-            response.message = err;
-        } else if (!doc) {
-            response.status = 404;
-            response.message = { "messageg": "game not found" };
-        }
-        res.status(response.status).json(response.message);
-    });
+}
 
+function returnDeleteResonse(doc, res) {
+    const response = {
+        status: 204
+    }
+
+    if (!doc) {
+        response.status = 404;
+        response.message = { "messageg": "game not found" };
+    }
+
+    res.status(response.status).json(response.message);
 }

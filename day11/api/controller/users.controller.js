@@ -10,48 +10,43 @@ module.exports.login = function(req, res) {
         username: req.body.username
     }
 
-    User.findOne(credential, function(err, doc) {
-        const response = {
-            status: 200,
-            message: doc
-        };
-        if (err) {
-            response.status = 500;
-            response.message = err;
-        }
-        if (!doc) {
-            response.status = 400;
-            response.message = { "message": "wrong creds!" }
-        }
-        if (response.status !== 200) {
-            res.status(response.status).json(response.message);
-            return;
-        }
-
-        console.log('user found', doc.username, doc.password);
-
-        bcrypt.compare(req.body.password, doc.password, function(err, same) {
-            const response = {
-                status: 200,
-                message: ""
-            }
-            if (err) {
-                response.status = 500;
-                response.message = err;
-            }
-            if (same) {
-                console.log('user authenticated');
-                response.message = jwt.sign({ payload: doc.username }, process.env.PASS_PHRASE, { expiresIn: 3600 });
-            } else {
-                response.status = 401;
-                response.message = { "message": "Wrong credentials" };
-            }
-            console.log('sending ', response.message);
-            res.status(response.status).json(response.message);
-
-        })
-    })
+    User.findOne(credential)
+        .then((user) => validateUsername(user, res))
+        .then((doc) => checkPass(doc, req))
+        .then((same) => loginUser(same, res, credential))
+        .catch((err) => res.status(500).json(err));
 };
+
+function validateUsername(doc, res) {
+
+    if (!doc) {
+        res.status(401).json({ "message": "wrong creds!" });
+        return;
+    }
+
+    console.log('user found', doc.username, doc.password);
+
+    return doc;
+}
+
+function checkPass(doc, req) {
+    return bcrypt.compare(req.body.password, doc.password);
+}
+
+function loginUser(same, res, credential) {
+    const response = {
+        status: 200
+    }
+    if (same) {
+        console.log('user authenticated');
+        response.message = jwt.sign({ payload: credential.username }, process.env.PASS_PHRASE, { expiresIn: 3600 });
+    } else {
+        response.status = 401;
+        response.message = { "message": "Wrong credentials" };
+    }
+    console.log('sending ', response.message);
+    res.status(response.status).json(response.message);
+}
 
 module.exports.authenticate = function(req, res, next) {
     if (!req.headers.authorization) {
@@ -71,33 +66,24 @@ module.exports.authenticate = function(req, res, next) {
 };
 
 module.exports.register = function(req, res) {
-    bcrypt.genSalt(10, function(err, generatedSalt) {
-        bcrypt.hash(req.body.password, generatedSalt, function(err, hashedPassword) {
-            if (err) {
-                console.log(err);
-                res.status(500).json({ "message": "error generating password" });
-                return;
-            }
+    bcrypt.genSalt(10)
+        .then((generatedSalt) => hashPassword(generatedSalt, req))
+        .then((hashPass) => registerUser(hashPass, req))
+        .then((user) => res.status(201).json(user))
+        .catch((err) => res.status(500).json(err));
+}
 
-            const newUser = {};
+function registerUser(hashedPassword, req) {
 
-            newUser.username = req.body.username;
-            newUser.password = hashedPassword;
-            newUser.name = req.body.name;
+    const newUser = {};
 
-            User.create(newUser, function(err, doc) {
-                const response = {
-                    status: 201,
-                    message: doc
-                };
+    newUser.username = req.body.username;
+    newUser.password = hashedPassword;
+    newUser.name = req.body.name;
 
-                if (err) {
-                    response.status = 500;
-                    response.message = err;
-                }
+    return User.create(newUser);
+}
 
-                res.status(response.status).json(response.message);
-            });
-        });
-    });
+function hashPassword(generatedSalt, req) {
+    return bcrypt.hash(req.body.password, generatedSalt);
 }
